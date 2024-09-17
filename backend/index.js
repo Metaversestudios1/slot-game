@@ -10,7 +10,7 @@ connectDB();
 // Middleware
 app.use(cors());
 const corsOption = {
-  origin: "http://localhost:3001",
+  origin: "https://slot-game-frontend-nine.vercel.app",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   credentials: true,
