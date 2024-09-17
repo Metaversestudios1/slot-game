@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.invalid-feedback {
+    color: #b82020;
+    font-size: 0.875rem;
+    display: block; /* Ensure error messages are visible */
+  }
+  
+  .is-invalid {
+    border-color: #b82020;
+  }
+  
+  .is-valid {
+    border-color: green;
+  }
+  .error{
+    color: #b82020 !important;
+    font-size: 14px !important; 
+  }
