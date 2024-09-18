@@ -23,7 +23,7 @@ const Users = () => {
   const fetchData = async () => {
     setLoader(true);
     const res = await fetch(
-      `http://localhost:8000/api/getAlluser?page=${page}&limit=${pageSize}&search=${search}`
+      `${process.env.REACT_APP_BACKEND_URL}/api/getAlluser?page=${page}&limit=${pageSize}&search=${search}`
     );
     const response = await res.json();
     if (response.success) {
@@ -43,7 +43,7 @@ const Users = () => {
       if (count === 1) {
         userOne = false;
       }
-      const res = await fetch(`http://localhost:8000/api/deleteuser`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/deleteuser`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const gameSchema = new mongoose.Schema({
-    // userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: String, required: true },
     betAmount: { type: Number, required: true },
     payout: { type: Number },
     result: { type: String, enum: ['win', 'lose'], required: true },

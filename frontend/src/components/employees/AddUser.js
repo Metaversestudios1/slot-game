@@ -102,7 +102,7 @@ const AddUser = () => {
 
     try {
       setLoader(true);
-      const res = await fetch(`http://localhost:8000/api/insertuser`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertuser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

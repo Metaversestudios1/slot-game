@@ -1,23 +1,16 @@
-
 const mongoose = require("mongoose");
 
 const SymbolSchema = new mongoose.Schema(
   {
-    symbol: {
-        type: String,
-      },
-     value: {
+    symbol_name: {
+      type: String,
+    },
+    win_amount: {
       type: Number,
     },
-   symbol_type:{
-    type: String  
-    },
-    // Type of symbol (e.g., "fruit", "wild")
+    win_percentage: {type: String},
     rarity: {
-        type: String,//determines frquency of apperance
-    },
-    game_id:{
-      type:String,
+      type: String, //determines frquency of apperance
     },
     deleted_at: {
       type: Date,

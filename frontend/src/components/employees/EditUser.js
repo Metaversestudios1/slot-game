@@ -34,7 +34,7 @@ const EditUser = () => {
 
   const fetchOldData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/getSingleuser`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getSingleuser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
@@ -130,7 +130,7 @@ const EditUser = () => {
     }
     setLoader(true);
     const updatedata = {id, oldData}
-    const response = await fetch(`http://localhost:8000/api/updateuser`, {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/updateuser`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedata),

@@ -53,7 +53,7 @@ const ShowUsers = () => {
   const fetchEmployeeDetails = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/getesingleemployee`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/getesingleemployee`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -120,21 +120,21 @@ const ShowUsers = () => {
         fetchDataAndUpdateState(
           role,
           "role",
-          `http://localhost:8000/api/getSingleRole `,
+          `${process.env.REACT_APP_BACKEND_URL}/api/getSingleRole `,
           "role"
         );
       if (department)
         fetchDataAndUpdateState(
           department,
           "department",
-          `http://localhost:8000/api/getSingleDepartment`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/getSingleDepartment`,
           "department_name"
         );
       if (teamLead)
         fetchDataAndUpdateState(
           teamLead,
           "team_lead",
-          `http://localhost:8000/api/getesingleemployee`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/getesingleemployee`,
           "name"
         );
 
@@ -144,7 +144,7 @@ const ShowUsers = () => {
           projects.map((id) =>
             fetchDataAndGetValue(
               id,
-              `http://localhost:8000/api/getSingleproject`,
+              `${process.env.REACT_APP_BACKEND_URL}/api/getSingleproject`,
               "name"
             )
           )

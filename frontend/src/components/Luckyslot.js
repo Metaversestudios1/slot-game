@@ -29,7 +29,7 @@ function Luckyslot() {
 
       // Fetch the backend result symbols
       try {
-        const response = await fetch("http://localhost:8000/api/playslot", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/playslot`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
