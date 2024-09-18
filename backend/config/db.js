@@ -7,7 +7,7 @@ const connectDB = async () => {
     try {
         
         await mongoose.connect(process.env.MONGODB_URI);
-          //  await mongoose.connect("mongodb://localhost:27017/luckyslot");
+        //    await mongoose.connect("mongodb://localhost:27017/luckyslot");
             console.log('MongoDB connected');
     } catch (error) {
         if (error.message.includes('database exists')) {
