@@ -1,9 +1,11 @@
 const Bet = require('../models/Bet');
 const bcrypt = require('bcrypt');
-const insertbet = async (req, res) => {    
+const insertbet = async (req, res) => { 
+   
     try {
         const newbet = new Bet(req.body);
         await newbet.save();
+        res.status(201).json({ success: true })
     } catch (err) {
       res.status(500).json({ success: false, message: "Error inserting bet", error: err.message });
     }

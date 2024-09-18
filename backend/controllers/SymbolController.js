@@ -4,6 +4,7 @@ const insertsymbol = async (req, res) => {
     try {
         const newsymbol = new Symbol(req.body);
         await newsymbol.save();
+        res.status(201).json({ success: true })
     } catch (err) {
       res.status(500).json({ success: false, message: "Error inserting Symbol", error: err.message });
     }
