@@ -11,7 +11,7 @@ const GameHistorySchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true, collection: "bet" }
+  { timestamps: true, collection: "gamehistory" }
 );
 
 module.exports = mongoose.model("GameHistory", GameHistorySchema);
