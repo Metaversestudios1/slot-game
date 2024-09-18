@@ -10,6 +10,7 @@ import AddUser from "./components/employees/AddUser";
 import Home from  "./components/Home";
 import Luckyslot from "./components/Luckyslot";
 import Login from "./components/Login";
+import Error from "./components/Error";
 function App() {
   const [sideBar, setSideBar] = useState(true);
   const toggleSideBar = () => {
@@ -94,6 +95,12 @@ function App() {
             <Luckyslot/>
           </div>
         </div>
+      ),
+    },
+    {
+      path: "*",
+      element: (
+        <Error/>
       ),
     },
   ]);

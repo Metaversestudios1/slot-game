@@ -1,6 +1,6 @@
 const Game = require("../models/Game");
 
-const symbols = ['🍒', '🍋', '🔔', '💎', '7️⃣'];
+const symbols = ['🍒', '🍋', '🔔', '💎', "7️⃣"];
 
 // Function to generate random symbols
 function spinSlot() {

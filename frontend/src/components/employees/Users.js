@@ -4,7 +4,6 @@ import { CiEdit } from "react-icons/ci";
 import { NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ImCross } from "react-icons/im";
 import { IoMdEye } from "react-icons/io";
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -19,16 +18,7 @@ const Users = () => {
     fetchData();
   }, [page, search]);
 
-  const fetchRoleName = async (id) => {
-    const roleRes = await fetch(`http://localhost:8000/api/getSingleRole`, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    const roleData = await roleRes.json();
-    const type = roleData.success ? roleData.data[0].role : "Unknown";
-    return type;
-  };
+ 
 
   const fetchData = async () => {
     setLoader(true);
@@ -36,7 +26,6 @@ const Users = () => {
       `http://localhost:8000/api/getAlluser?page=${page}&limit=${pageSize}&search=${search}`
     );
     const response = await res.json();
-    console.log(response)
     if (response.success) {
       setUsers(response.result);
       setCount(response.count);
