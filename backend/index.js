@@ -33,11 +33,13 @@ const AdminRoute = require("./routes/AdminRoute");
 const UserRoute = require("./routes/UserRoute");
 const BetRoutes = require("./routes/BetRoutes");
 const SymbolRoutes = require("./routes/SymbolRoutes");
+const GameHistoryRoute = require("./routes/GameHistoryRoute");
 app.use('/api',UserRoute);
 app.use('/api', AdminRoute);
 app.use('/api', GameRoute);
 app.use('/api', BetRoutes);
 app.use('/api', SymbolRoutes);
+app.use('/api', GameHistoryRoute);
 app.use('/', async (req, res) => {
   
   res.json('ok');
