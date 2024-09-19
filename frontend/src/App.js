@@ -11,6 +11,7 @@ import Home from  "./components/Home";
 import Luckyslot from "./components/Luckyslot";
 import Login from "./components/Login";
 import Error from "./components/Error";
+import LuckySlot from "./components/setting/LuckySlot";
 function App() {
   const [sideBar, setSideBar] = useState(true);
   const toggleSideBar = () => {
@@ -101,6 +102,18 @@ function App() {
       path: "*",
       element: (
         <Error/>
+      ),
+    },
+    {
+      path: "/setting/luckyslot",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <LuckySlot/>
+          </div>
+        </div>
       ),
     },
   ]);
