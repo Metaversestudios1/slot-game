@@ -1,9 +1,12 @@
 const Bet = require('../models/Bet');
 const bcrypt = require('bcrypt');
-const insertbet = async (req, res) => { 
-   
+const insertbet = async (req, res) => {    
     try {
-        const newbet = new Bet(req.body);
+        const level = req.body.bet_level;
+        const line = req.body.bet_line;
+        const size = req.body.bet_size;
+        const bet_amount = level*line*size;
+        const newbet = new Bet({...req.body,bet_amount:bet_amount});
         await newbet.save();
         res.status(201).json({ success: true })
     } catch (err) {
@@ -15,9 +18,18 @@ const insertbet = async (req, res) => {
     const updatedata = req.body;
     const id = updatedata.id;
     try{
+        // console.log(updatedata.oldData)
+        const level = updatedata.oldData.bet_level;
+        const line = updatedata.oldData.bet_line;
+        const size = updatedata.oldData.bet_size;
+        const bet_amount = level*line*size;
         const result = await Bet.updateOne(
             {_id:id},
-            { $set :updatedata.oldData}
+            { $set :{
+                ...updatedata.oldData,
+                bet_amount:bet_amount
+            }
+            }
         );
         if(!result){
             res.status(404).json({success:false,message:"bet not found"});
