@@ -19,7 +19,7 @@ function Luckyslot() {
  
   const fetchsymbol =async ()  =>{
     try{
-    const response = await fetch(`http://localhost:8000/api/getAllsymbol`)      
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`)      
         const result = await response.json();
      
         const allSymbolsmap = result.result.map((item)=>{
@@ -50,7 +50,7 @@ function Luckyslot() {
        // Stop the randomization
       // Fetch the backend result symbols
       try {
-        const response = await fetch("http://localhost:8000/api/playslot", {
+        const response = await fetch("${process.env.REACT_APP_BACKEND_URL}/api/playslot", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,6 +60,7 @@ function Luckyslot() {
  
         const data = await response.json();
         if(data.success) {
+          clearInterval(spinInterval);
 
           setColumns((prevColumns) => [
             [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
@@ -68,7 +69,6 @@ function Luckyslot() {
           ]);
           setResult(data.result); // win or lose
           setPayout(data.payout); // payout if win
-          clearInterval(spinInterval);
 
         }
       } catch (error) {
