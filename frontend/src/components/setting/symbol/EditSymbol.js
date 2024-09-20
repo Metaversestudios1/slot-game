@@ -4,7 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
+import $ from "jquery";
+import "jquery-validation";
 const EditSymbol = () => {
   const params = useParams();
   const { id } = params;
@@ -18,6 +19,12 @@ const EditSymbol = () => {
   useEffect(() => {
     fetchOldData();
   }, []);
+
+  
+  useEffect(() => {
+    // Re-initialize validation on data change
+    validateSymbolForm();
+  }, [oldData]);
 
   const fetchOldData = async () => {
     const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getSinglesymbol`, {
@@ -40,10 +47,53 @@ const EditSymbol = () => {
     const { name, value } = e.target;
     setOldData({ ...oldData, [name]: value });
   };
+  const validateSymbolForm = () => {
+ 
+ $("#symbolform").validate({
+   rules: {
+     symbol_name: {
+       required: true,
+     },
+     win_amount: {
+       required: true,
+     },
+     win_percentage: {
+       required: true,
+     },
+   },
+   messages: {
+     symbol_name: {
+       required: "Please enter symbol",
+     },
+     win_amount: {
+       required: "Please enter win amount",
+     },
+     win_percentage: {
+       required: "Please enter win percentage",
+     },
+   },
+   errorElement: "div",
+   errorPlacement: function (error, element) {
+     error.addClass("invalid-feedback");
+     error.insertAfter(element);
+   },
+   highlight: function (element, errorClass, validClass) {
+     $(element).addClass("is-invalid").removeClass("is-valid");
+   },
+   unhighlight: function (element, errorClass, validClass) {
+     $(element).removeClass("is-invalid").addClass("is-valid");
+   },
+ });
 
+ // Return validation status
+ return $("#symbolform").valid();
+};
   const handleSubmit = async (e) => {
     const updatedata = { id, oldData };
     e.preventDefault();
+    if(!validateSymbolForm()) {
+      return
+    }
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/updatesymbol`, {
         method: "PUT",
@@ -95,7 +145,7 @@ const EditSymbol = () => {
         <div className="text-2xl font-bold mx-2 my-8 px-2">Edit symbol</div>
       </div>
       <div className="flex flex-col items-center justify-center w-[70%] m-auto">
-        <form id="settingform" className="w-[60%]">
+        <form id="symbolform" className="w-[60%]">
           <div className="my-4">
             <label
               htmlFor="symbol_name"

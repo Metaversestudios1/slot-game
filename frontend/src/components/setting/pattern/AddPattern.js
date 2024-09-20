@@ -5,14 +5,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa6";
-
+import $ from "jquery";
+import "jquery-validation";
 const AddPattern = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [symbols, setSymbols] = useState([]);
   const initialState = {
-    symbol: "",
+    symbol: [],
     patternType: "",
     coordinates: [[], [], []],
     win_amount: "",
@@ -28,7 +29,7 @@ const AddPattern = () => {
   const [data, setData] = useState(initialState);
   useEffect(() => {
     fetchSymbols();
-  });
+  },[]);
   const fetchSymbols = async () => {
     const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`);
     const response = await res.json();
@@ -36,35 +37,82 @@ const AddPattern = () => {
       setSymbols(response.result);
     }
   };
+  const validatePatternForm = () => {
+    $("#patternform").validate({
+      rules: {
+        "symbol[]": {
+          required: true
+        },
+        patternType: {
+          required: true,
+        },
+        coordinates: {
+          required: true,
+        },
+        win_amount: {
+          required: true,
+        },
+      },
+      messages: {
+        "symbol[]": {
+          required: "Please select at least one symbol",
+        },
+        patternType: {
+          required: "Please enter pattern type",
+        },
+        coordinates: {
+          required: "Please enter coordinates",
+        },
+        win_amount: {
+          required: "Please enter win amout",
+        },
+      },
+      errorElement: "div",
+      errorPlacement: function (error, element) {
+        error.addClass("invalid-feedback");
+        error.insertAfter(element);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass("is-invalid").removeClass("is-valid");
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass("is-invalid").addClass("is-valid");
+      },
+    });
 
+    // Return validation status
+    return $("#patternform").valid();
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(data)
-    // try {
-    //   const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertbet`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(data),
-    //   });
-    //   const response = await res.json();
-    //   if (response.success) {
-    //     toast.success("Bet added Successfully!", {
-    //       position: "top-right",
-    //       autoClose: 1000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       theme: "light",
-    //     });
-    //     setTimeout(() => {
-    //       navigate("/Bets");
-    //     }, 1500);
-    //   }
-    // } catch (err) {
-    //   console.err(err);
-    // }
+    if(!validatePatternForm()){
+      return
+    }
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertpattern`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const response = await res.json();
+      if (response.success) {
+        toast.success("Pattern added Successfully!", {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setTimeout(() => {
+          navigate("/patterns");
+        }, 1500);
+      }
+    } catch (err) {
+      console.err(err);
+    }
   };
   const handleGoBack = () => {
     navigate(-1);
@@ -103,10 +151,10 @@ const AddPattern = () => {
           onClick={handleGoBack}
           className="bg-[#5f22d9] rounded-full hover:scale-110 transition-all duration-100 text-white  text-[40px] cursor-pointer shadow-xl ml-5"
         />
-        <div className="text-2xl font-bold mx-2 my-8 px-2">Add Bet</div>
+        <div className="text-2xl font-bold mx-2 my-8 px-2">Add pattern</div>
       </div>
       <div className="flex flex-col items-center justify-center w-[70%] m-auto">
-        <form id="settingform" className="w-[60%]">
+        <form id="patternform" className="w-[60%]">
           <div>
             <label
               htmlFor="symbol"
@@ -150,6 +198,11 @@ const AddPattern = () => {
                   ))}
                 </div>
               )}
+              <input
+              type="hidden"
+              name="symbol[]"
+              value={data.symbol.length ? "valid" : ""}
+            />
             </div>
           </div>
           <div className="my-4 relative ">
@@ -176,7 +229,7 @@ const AddPattern = () => {
             >
               Coordinates
             </label>
-            <div className="flex flex-col">
+            <div className="flex flex-col" >
             {data.coordinates.map((coord, index) => (
               <div key={index} className="flex flex-row">
                 <input

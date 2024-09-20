@@ -14,24 +14,64 @@ const Patterns = () => {
 
   useEffect(() => {
     fetchPatterns();
-  }, [page]); 
-
+  }, [page]);
+  const fetchSymbolName = async (id) => {
+    try {
+      const symbolRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getSinglesymbol`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const symbolData = await symbolRes.json();
+      return symbolData.success ? symbolData.result.symbol_name : "Unknown";
+    } catch (error) {
+      console.error("Error fetching symbol name:", error);
+      return "Unknown";
+    }
+  };
   const fetchPatterns = async () => {
     setLoader(true);
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/getAllbet?page=${page}&limit=${pageSize}`
-    );
-    const response = await res.json();
-    console.log(response)
-    if (response.success) {
-      if(response.result.length===0) {
-        setNoData(true)
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/getAllpattern?page=${page}&limit=${pageSize}`
+      );
+      const response = await res.json();
+
+      if (response.success) {
+        if (response.result.length === 0) {
+          setNoData(true);
+        }
+
+        // Map each pattern, resolving all symbol names for each pattern
+        const updatedPatterns = await Promise.all(
+          response.result.map(async (pattern) => {
+            const symbolsWithNames = await Promise.all(
+              pattern.symbol.map(async (symbolId) => {
+                const symbolName = await fetchSymbolName(symbolId);
+                return symbolName;
+              })
+            );
+
+            // Return the pattern with symbol names included
+            return {
+              ...pattern,
+              symbol: symbolsWithNames, // Add a new key with the fetched names
+            };
+          })
+        );
+
+        setPatterns(updatedPatterns);
+        setCount(response.count);
+      } else {
+        setNoData(true);
       }
-      setPatterns(response.result);
-      setCount(response.count);
+    } catch (error) {
+      console.error("Error fetching patterns:", error);
+    } finally {
       setLoader(false);
     }
   };
+
 
   const handleDelete = async (e, id) => {
     e.preventDefault();
@@ -43,7 +83,7 @@ const Patterns = () => {
       if (count === 1) {
         patternOne = false;
       }
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/deletebet`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/deletepattern`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
@@ -53,7 +93,7 @@ const Patterns = () => {
       }
       const response = await res.json();
       if (response.success) {
-        toast.success("Bet is deleted Successfully!", {
+        toast.success("Pattern is deleted Successfully!", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -121,16 +161,22 @@ const Patterns = () => {
                   Sr no.
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Bet size
+                  Symbol
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Bet level
+                  Pattern type
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Bet lines
+                  coordinates
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Bet amount
+                  minMatchesRequired
+                </th>
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  win_amount
+                </th>
+                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
+                  description
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
@@ -149,20 +195,26 @@ const Patterns = () => {
                   </th>
 
                   <td className="px-6 py-4 border-2 border-gray-300 relative">
-                    {item?.bet_size}
+                    {(item?.symbol).join(", ")}
                   </td>
 
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap border-2 border-gray-300"
                   >
-                    {item?.bet_level}
+                    {item?.patternType}
                   </th>
                   <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.bet_line}
+                    {item?.coordinates}
                   </td>
                   <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.bet_amount}
+                    {item?.minMatchesRequired}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.win_amount}
+                  </td>
+                  <td className="px-6 py-4 border-2 border-gray-300">
+                    {item?.description || "-"}
                   </td>
                   <td className=" py-5 pl-5 gap-1 border-2  border-gray-300">
                     <div className="flex items-center">
