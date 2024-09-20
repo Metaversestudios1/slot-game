@@ -1,15 +1,33 @@
 import React, { useState, useEffect } from "react";
+ 
 
-// Array of symbols available for the slot
-const allSymbols = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
-
+ 
 function Luckyslot() {
   const [columns, setColumns] = useState([[], [], []]); // Initial symbols for 3 columns
   const [spinning, setSpinning] = useState(false); // To track if spinning
   const [result, setResult] = useState(""); // Win or lose result
   const [payout, setPayout] = useState(0); // Payout amount
   const [betAmount, setBetAmount] = useState(0); // Bet amount
-
+  const [allSymbols,setAllSymbols] = useState([])
+  useEffect(() => {
+    fetchsymbol();
+  }, []);
+ 
+  const fetchsymbol =async ()  =>{
+    try{
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`)      
+        const result = await response.json();
+     
+        const allSymbolsmap = result.result.map((item)=>{
+            return item.symbol_name;
+        })
+        setAllSymbols(allSymbolsmap)
+        // console.log(allSymbols);
+       
+    }catch(error){
+      console.error("Failed to fetch old data:", error);
+    }
+  }
   // Function to spin the slot machine
   const spinSlot = () => {
     // Start spinning animation by randomizing symbols for 2 seconds
@@ -20,23 +38,23 @@ function Luckyslot() {
         [randomSymbol(), randomSymbol(), randomSymbol()],
       ]);
     }, 100); // Change symbols every 100ms for the spinning effect
-
+ 
     setSpinning(true);
-
+ 
     // Stop spinning after 2 seconds and get backend result
     setTimeout(async () => {
       clearInterval(spinInterval); // Stop the randomization
-
+ 
       // Fetch the backend result symbols
       try {
-        const response = await fetch("${process.env.REACT_APP_BACKEND_URL}/api/playslot", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/playslot`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ betAmount }), // Send bet amount to backend
         });
-
+ 
         const data = await response.json();
         setColumns((prevColumns) => [
           [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
@@ -48,11 +66,11 @@ function Luckyslot() {
       } catch (error) {
         console.error("Error fetching slot result:", error);
       }
-
+ 
       setSpinning(false); // Reset spinning state
-    }, 2000); // Stop spinning after 2 seconds
+    }, 1500); // Stop spinning after 2 seconds
   };
-
+ 
   // Helper function to get a random symbol
   const randomSymbol = () =>
     allSymbols[Math.floor(Math.random() * allSymbols.length)];
@@ -60,7 +78,7 @@ function Luckyslot() {
   return (
     <div>
       <h1>Lucky Slot Game</h1>
-
+ 
       <div>
         <label>
           Bet Amount:
@@ -74,7 +92,7 @@ function Luckyslot() {
           {spinning ? "Spinning..." : "Spin"}
         </button>
       </div>
-
+ 
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
@@ -89,7 +107,7 @@ function Luckyslot() {
           </div>
         ))}
       </div>
-
+ 
       {/* Display result and payout */}
       {result && (
         <div>
@@ -101,5 +119,5 @@ function Luckyslot() {
     </div>
   );
 }
-
+ 
 export default Luckyslot;
