@@ -74,6 +74,7 @@ const checkWinOrLose = async (req, res) => {
     await game.save();
 
     return res.json({
+      success:true,
       result,
       payout,
       symbols: resultSymbols,
