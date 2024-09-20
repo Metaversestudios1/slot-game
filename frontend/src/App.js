@@ -11,7 +11,15 @@ import Home from  "./components/Home";
 import Luckyslot from "./components/Luckyslot";
 import Login from "./components/Login";
 import Error from "./components/Error";
-import LuckySlot from "./components/setting/LuckySlot";
+import Symbols from "./components/setting/symbol/Symbols";
+import EditSymbol from "./components/setting/symbol/EditSymbol";
+import AddSymbol from "./components/setting/symbol/AddSymbol";
+import Bets from "./components/setting/bet/Bets";
+import AddBet from "./components/setting/bet/AddBet";
+import EditBet from "./components/setting/bet/EditBet";
+import Patterns from "./components/setting/pattern/Patterns";
+import AddPattern from "./components/setting/pattern/AddPattern";
+import EditPattern from "./components/setting/pattern/EditPattern";
 function App() {
   const [sideBar, setSideBar] = useState(true);
   const toggleSideBar = () => {
@@ -98,22 +106,119 @@ function App() {
         </div>
       ),
     },
+    
     {
-      path: "*",
-      element: (
-        <Error/>
-      ),
-    },
-    {
-      path: "/setting/luckyslot",
+      path: "/symbols",
       element: (
         <div className="flex h-screen">
           <Sidebar sidebar={sideBar} className="flex-1" />
           <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
             <Navbar toggleSideBar={toggleSideBar} />
-            <LuckySlot/>
+            <Symbols/>
           </div>
         </div>
+      ),
+    },
+    {
+      path: "/symbols/addsymbol",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <AddSymbol/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/symbols/editsymbol/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <EditSymbol/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/bets",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <Bets/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/bets/addbet",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <AddBet/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/bets/editbet/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <EditBet/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/patterns",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <Patterns/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/patterns/addpattern",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <AddPattern/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "/patterns/editpattern/:id",
+      element: (
+        <div className="flex h-screen">
+          <Sidebar sidebar={sideBar} className="flex-1" />
+          <div className="flex flex-col flex-grow overflow-y-auto flex-[3]">
+            <Navbar toggleSideBar={toggleSideBar} />
+            <EditPattern/>
+          </div>
+        </div>
+      ),
+    },
+    {
+      path: "*",
+      element: (
+        <Error/>
       ),
     },
   ]);

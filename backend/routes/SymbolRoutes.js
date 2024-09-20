@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/insertsymbol',insertsymbol);
 router.put('/updatesymbol',updatesymbol,);
 router.get('/getAllsymbol',getAllsymbol);
-router.get('/getSinglesymbol',getSinglesymbol);
+router.post('/getSinglesymbol',getSinglesymbol);
 router.delete('/deletesymbol',deletesymbol);
 
 module.exports=router;
