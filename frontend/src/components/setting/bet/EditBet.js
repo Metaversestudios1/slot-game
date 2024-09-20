@@ -4,7 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
+import $ from "jquery";
+import "jquery-validation";
 const EditBet = () => {
   const params = useParams();
   const { id } = params;
@@ -12,7 +13,6 @@ const EditBet = () => {
   const initialState = {
     bet_size: "",
     bet_line: "",
-    bet_amount: "",
     bet_level: "",
   };
 
@@ -33,7 +33,6 @@ const EditBet = () => {
         ...oldData,
         bet_size: response?.result?.bet_size,
         bet_line: response?.result?.bet_line,
-        bet_amount: response?.result?.bet_amount,
         bet_level: response?.result?.bet_level,
       });
     }
@@ -43,10 +42,52 @@ const EditBet = () => {
     const { name, value } = e.target;
     setOldData({ ...oldData, [name]: value });
   };
+  const validateBetForm = () => {
+    $("#betform").validate({
+      rules: {
+        bet_size: {
+          required: true,
+        },
+        bet_line: {
+          required: true,
+        },
+        bet_level: {
+          required: true,
+        },
+      },
+      messages: {
+        bet_size: {
+          required: "Please enter bet size",
+        },
+        bet_line: {
+          required: "Please enter bet line",
+        },
+        bet_level: {
+          required: "Please enter bet level",
+        },
+      },
+      errorElement: "div",
+      errorPlacement: function (error, element) {
+        error.addClass("invalid-feedback");
+        error.insertAfter(element);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass("is-invalid").removeClass("is-valid");
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass("is-invalid").addClass("is-valid");
+      },
+    });
 
+    // Return validation status
+    return $("#betform").valid();
+  };
   const handleSubmit = async (e) => {
     const updatedata = { id, oldData };
     e.preventDefault();
+    if (!validateBetForm()) {
+      return;
+    }
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/updatebet`, {
         method: "PUT",
@@ -98,7 +139,7 @@ const EditBet = () => {
         <div className="text-2xl font-bold mx-2 my-8 px-2">Edit Bet</div>
       </div>
       <div className="flex flex-col items-center justify-center w-[70%] m-auto">
-        <form id="settingform" className="w-[60%]">
+        <form id="betform" className="w-[60%]">
           <div className="my-4">
             <label
               htmlFor="bet_size"
@@ -121,7 +162,7 @@ const EditBet = () => {
               htmlFor="bet_line"
               className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
             >
-            Bet Line
+              Bet Line
             </label>
             <input
               type="text"
@@ -135,27 +176,10 @@ const EditBet = () => {
           </div>
           <div className="my-4 relative">
             <label
-              htmlFor="bet_amount"
-              className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
-            >
-            Bet amount
-            </label>
-            <input
-              type="text"
-              name="bet_amount"
-              id="bet_amount"
-              value={oldData?.bet_amount}
-              onChange={handleChange}
-              className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
-              placeholder="Enter bet amount"
-            />
-          </div>
-          <div className="my-4 relative">
-            <label
               htmlFor="bet_level"
               className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
             >
-            Bet_level
+              Bet_level
             </label>
             <input
               type="text"
@@ -173,7 +197,7 @@ const EditBet = () => {
             onClick={handleSubmit}
             className="my-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-          Save Changes
+            Save Changes
           </button>
         </form>
       </div>

@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/ReactToastify.css";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
+import $ from "jquery";
+import "jquery-validation";
 const AddBet = () => {
   const navigate = useNavigate();
   const initialState = {
     bet_size: "",
     bet_line: "",
-    bet_amount: "",
     bet_level: "",
   };
 
@@ -20,9 +19,52 @@ const AddBet = () => {
   };
 
   const [data, setData] = useState(initialState);
+  const validateBetForm = () => {
+ 
+ $("#betform").validate({
+   rules: {
+     bet_size: {
+       required: true,
+     },
+     bet_line: {
+       required: true,
+     },
+     bet_level: {
+       required: true,
+     },
+   },
+   messages: {
+     bet_size: {
+       required: "Please enter bet size",
+     },
+     bet_line: {
+       required: "Please enter bet line",
+     },
+     bet_level: {
+       required: "Please enter bet level",
+     },
+   },
+   errorElement: "div",
+   errorPlacement: function (error, element) {
+     error.addClass("invalid-feedback");
+     error.insertAfter(element);
+   },
+   highlight: function (element, errorClass, validClass) {
+     $(element).addClass("is-invalid").removeClass("is-valid");
+   },
+   unhighlight: function (element, errorClass, validClass) {
+     $(element).removeClass("is-invalid").addClass("is-valid");
+   },
+ });
 
+ // Return validation status
+ return $("#betform").valid();
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!validateBetForm()) {
+      return
+    }
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertbet`, {
         method: "POST",
@@ -42,7 +84,7 @@ const AddBet = () => {
           theme: "light",
         });
         setTimeout(() => {
-          navigate("/Bets");
+          navigate("/bets");
         }, 1500);
       }
     } catch (err) {
@@ -74,7 +116,7 @@ const AddBet = () => {
         <div className="text-2xl font-bold mx-2 my-8 px-2">Add Bet</div>
       </div>
       <div className="flex flex-col items-center justify-center w-[70%] m-auto">
-        <form id="settingform" className="w-[60%]">
+        <form id="betform" className="w-[60%]">
           <div className="my-4">
             <label
               htmlFor="bet_size"
@@ -107,23 +149,6 @@ const AddBet = () => {
               onChange={handleChange}
               className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
               placeholder="Enter bet line"
-            />
-          </div>
-          <div className="my-4 relative">
-            <label
-              htmlFor="bet_amount"
-              className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
-            >
-            Bet amount
-            </label>
-            <input
-              type="text"
-              name="bet_amount"
-              id="bet_amount"
-              value={data.bet_amount}
-              onChange={handleChange}
-              className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
-              placeholder="Enter bet amount"
             />
           </div>
           <div className="my-4 relative">
