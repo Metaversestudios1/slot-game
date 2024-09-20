@@ -21,6 +21,12 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       default:0
     },
+    resetOtp: {
+      type: String,
+    },
+    otpExpires: {
+      type: Date,
+    },
     status: {
       type: Number,
       default: 1, // Tinyint equivalent
