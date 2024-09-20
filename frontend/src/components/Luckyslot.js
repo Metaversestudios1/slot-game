@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
  
-
+ 
+ 
+ 
+// Array of symbols available for the slot
+//  let allSymbols;
  
 function Luckyslot() {
   const [columns, setColumns] = useState([[], [], []]); // Initial symbols for 3 columns
@@ -43,8 +47,7 @@ function Luckyslot() {
  
     // Stop spinning after 2 seconds and get backend result
     setTimeout(async () => {
-      clearInterval(spinInterval); // Stop the randomization
- 
+       // Stop the randomization
       // Fetch the backend result symbols
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/playslot`, {
@@ -56,13 +59,18 @@ function Luckyslot() {
         });
  
         const data = await response.json();
-        setColumns((prevColumns) => [
-          [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
-          [prevColumns[1][0], data.symbols[1], prevColumns[1][2]], // Middle row set to backend result symbols
-          [prevColumns[2][0], data.symbols[2], prevColumns[2][2]], // Keep bottom row, randomize middle row symbol
-        ]);
-        setResult(data.result); // win or lose
-        setPayout(data.payout); // payout if win
+        if(data.success) {
+          clearInterval(spinInterval);
+
+          setColumns((prevColumns) => [
+            [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
+            [prevColumns[1][0], data.symbols[1], prevColumns[1][2]], // Middle row set to backend result symbols
+            [prevColumns[2][0], data.symbols[2], prevColumns[2][2]], // Keep bottom row, randomize middle row symbol
+          ]);
+          setResult(data.result); // win or lose
+          setPayout(data.payout); // payout if win
+
+        }
       } catch (error) {
         console.error("Error fetching slot result:", error);
       }
