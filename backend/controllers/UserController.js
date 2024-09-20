@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const jwt = require("jsonwebtoken");
 const insertuser = async (req, res) => {
     const { password, ...userData } = req.body;
     try {
