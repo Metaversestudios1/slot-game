@@ -35,6 +35,7 @@ const BetRoutes = require("./routes/BetRoutes");
 const SymbolRoutes = require("./routes/SymbolRoutes");
 const GameHistoryRoute = require("./routes/GameHistoryRoute");
 const PatternRoute = require("./routes/PatternRoutes");
+const PatternTypeRoutes = require("./routes/PatternTypeRoutes");
 app.use('/api',UserRoute);
 app.use('/api', AdminRoute);
 app.use('/api', GameRoute);
@@ -42,6 +43,7 @@ app.use('/api', BetRoutes);
 app.use('/api', SymbolRoutes);
 app.use('/api', GameHistoryRoute);
 app.use('/api', PatternRoute);
+app.use('/api', PatternTypeRoutes);
 
 app.use('/', async (req, res) => {
   
