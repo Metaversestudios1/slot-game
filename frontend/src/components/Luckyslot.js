@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
  
  
- 
- 
-// Array of symbols available for the slot
-//  let allSymbols;
- 
 function Luckyslot() {
   const [columns, setColumns] = useState([[], [], []]); // Initial symbols for 3 columns
   const [spinning, setSpinning] = useState(false); // To track if spinning
@@ -60,8 +55,8 @@ function Luckyslot() {
  
         const data = await response.json();
         if(data.success) {
-          clearInterval(spinInterval);
 
+          clearInterval(spinInterval);
           setColumns((prevColumns) => [
             [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
             [prevColumns[1][0], data.symbols[1], prevColumns[1][2]], // Middle row set to backend result symbols

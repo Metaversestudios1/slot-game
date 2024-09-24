@@ -28,6 +28,7 @@ const EditBet = () => {
       body: JSON.stringify({ id }),
     });
     const response = await res.json();
+    console.log(response)
     if (response.success) {
       setOldData({
         ...oldData,

@@ -150,7 +150,7 @@ const EditPattern = () => {
               </button>
               {dropdownOpen && (
                 <div
-                  className="absolute top-full left-0 bg-white border border-gray-300 rounded-sm shadow-lg w-full"
+                  className="absolute max-h-36 overflow-y-scroll top-full left-0 bg-white border border-gray-300 rounded-sm shadow-lg w-full"
                   style={{ zIndex: 10 }}
                 >
                   {symbols.map((item) => (

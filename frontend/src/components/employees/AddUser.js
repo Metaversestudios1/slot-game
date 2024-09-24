@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import $ from "jquery";
 import "jquery-validation";
-import { FaAngleDown } from "react-icons/fa6";
 
 const AddUser = () => {
   const [loader, setLoader] = useState(false);
