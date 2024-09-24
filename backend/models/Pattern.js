@@ -9,9 +9,9 @@ const PatternSchema = new mongoose.Schema({
     type: String,  // e.g., 'horizontal', 'vertical', 'diagonal', 'custom'
     required: true,
   },
-  coordinates: {
-    type: [[Number]],  // An array of arrays representing the grid positions that must match
-    required: true,//Example: [[0, 0], [0, 1], [0, 2]]
+coordinates: {
+    type: Map,     // Dynamic object where keys are symbols and values are 2D arrays
+    of: [[Number]], // Values are 2D arrays of numbers
   },
   minMatchesRequired: {
     type: Number,  // Minimum number of matching symbols for the win
@@ -25,6 +25,7 @@ const PatternSchema = new mongoose.Schema({
     type: String,
     default: '',  // Optional description of the pattern
   },
+
 }, { timestamps: true, collection: "pattern" });
 
 module.exports = mongoose.model('Pattern', PatternSchema);
