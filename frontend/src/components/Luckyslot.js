@@ -66,7 +66,7 @@ function Luckyslot() {
       }
 
       setSpinning(false); // Reset spinning state
-    }, 1500); // Stop spinning after 2 seconds
+    }, 500); // Stop spinning after 2 seconds
   };
 
   // Helper function to get a random symbol
