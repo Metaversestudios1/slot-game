@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 import { IoMdSettings } from "react-icons/io";
-const Sidebar = ({ sidebar }) => {
+const Sidebar = ({ sidebar, toggleSideBar }) => {
   const [openSubMenu, setOpenSubMenu] = useState({
     admin: false,
     setting: false,
@@ -39,7 +39,7 @@ const Sidebar = ({ sidebar }) => {
             data-hs-accordion-always-open
           >
             <ul className="space-y-1.5">
-              <li className=" hover:scale-105 transition-transform duration-200 ">
+              <li className=" hover:scale-105 transition-transform duration-200 " onClick={toggleSideBar}>
                 <NavLink
                   to="/"
                   className={({ isActive }) =>
@@ -106,6 +106,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -123,6 +124,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -161,6 +163,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -178,6 +181,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -196,6 +200,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -213,6 +218,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -231,6 +237,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -248,6 +255,7 @@ const Sidebar = ({ sidebar }) => {
                   <li
                     id="users-accordion"
                     className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
                   >
                     <div className="hs-accordion" id="users-accordion-sub-1">
                       <NavLink
@@ -259,6 +267,42 @@ const Sidebar = ({ sidebar }) => {
                         }
                       >
                         Add pattern
+                      </NavLink>
+                    </div>
+                  </li>
+                  <li
+                    id="users-accordion"
+                    className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
+                  >
+                    <div className="hs-accordion" id="users-accordion-sub-1">
+                      <NavLink
+                        to="/patternstype"
+                        className={({ isActive }) =>
+                          isActive
+                            ? "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white bg-[#470692a1] rounded-lg ml-10 "
+                            : "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg ml-10  hover:text-black hover:bg-white"
+                        }
+                      >
+                        Patterns Type
+                      </NavLink>
+                    </div>
+                  </li>
+                  <li
+                    id="users-accordion"
+                    className="hs-accordion-content w-full my-2 overflow-hidden transition-all duration-200 hover:scale-110"
+                    onClick={toggleSideBar}
+                  >
+                    <div className="hs-accordion" id="users-accordion-sub-1">
+                      <NavLink
+                        to="/patternstype/addpatterntype"
+                        className={({ isActive }) =>
+                          isActive
+                            ? "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white bg-[#470692a1] rounded-lg ml-10 "
+                            : "flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-white rounded-lg ml-10  hover:text-black hover:bg-white"
+                        }
+                      >
+                        Add pattern type 
                       </NavLink>
                     </div>
                   </li>

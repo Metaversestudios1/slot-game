@@ -2,7 +2,17 @@ const PatternType = require('../models/PatternType');
 const bcrypt = require('bcrypt');
 const insertpatterntype = async (req, res) => {    
     try {
-        const newpatterntype = new PatternType(req.body);
+        const data = req.body;
+        let pattern_id;
+        const lastData= await PatternType.find().sort({ $natural: -1 }).limit(1)
+        
+        if(lastData.length===0) {
+            pattern_id=1
+        }
+        else {
+            pattern_id = (lastData[0].pattern_id) + 1
+        }
+        const newpatterntype = new PatternType({...data, pattern_id});
         await newpatterntype.save();
         res.status(201).json({ success: true })
     } catch (err) {
@@ -60,7 +70,7 @@ const getSinglepatterntype = async(req, res) => {
 
         const result = await PatternType.findOne({ _id: id });
         if (!result) {
-            res.status(404).json({ success: false, message: "PatternType not found" });
+            return res.status(404).json({ success: false, message: "PatternType not found" });
         }
         res.status(201).json({ success: true, result: result });
     } catch (error) {

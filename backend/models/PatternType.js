@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 const PatternTypeSchema = new mongoose.Schema({
     symbol_count: {
-        type: Number,//symbol _id from symbol table
+        type: Number,
         required: true,
     },
     pattern_id: {
-        type: String,//symbol _id from symbol table
-        unique: true,
-    },
-    patterntype: {
-        type: String,  // e.g., description about pattern 
+        type: Number,
+        unique:true //it is started from 1 to increment in every insert
+    }, 
+    patternType: {
+        type: String,  
     },  
     combination_count: {
-        type: String,//e.g., 'horizontal', 'diagonal', 'both')
+        type: String,
     },
     status: {
         type: String,
-        enum: ['0', '1'],  // Field to track if the pattern is active or inactive
-        default: '1',             // Default value
+        enum: ['0', '1'],  
+        default: '1',            
     },
     deleted_at: {
         type: Date,

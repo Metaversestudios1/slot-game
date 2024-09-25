@@ -1,102 +1,81 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "react-toastify/dist/ReactToastify.css";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import $ from "jquery";
 import "jquery-validation";
-const EditBet = () => {
-  const params = useParams();
-  const { id } = params;
+const AddPatternType = () => {
   const navigate = useNavigate();
   const initialState = {
-    bet_size: "",
-    bet_line: "",
-    bet_level: "",
-  };
-
-  const [oldData, setOldData] = useState(initialState);
-  useEffect(() => {
-    fetchOldData();
-  }, []);
-
-  const fetchOldData = async () => {
-    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getSinglebet`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    const response = await res.json();
-    if (response.success) {
-      setOldData({
-        ...oldData,
-        bet_size: response?.result?.bet_size,
-        bet_line: response?.result?.bet_line,
-        bet_level: response?.result?.bet_level,
-      });
-    }
+    symbol_count: "",
+    patternType: "",
+    combination_count: "",
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOldData({ ...oldData, [name]: value });
+    setData({ ...data, [name]: value });
   };
-  const validateBetForm = () => {
-    $("#betform").validate({
-      rules: {
-        bet_size: {
-          required: true,
-        },
-        bet_line: {
-          required: true,
-        },
-        bet_level: {
-          required: true,
-        },
-      },
-      messages: {
-        bet_size: {
-          required: "Please enter bet size",
-        },
-        bet_line: {
-          required: "Please enter bet line",
-        },
-        bet_level: {
-          required: "Please enter bet level",
-        },
-      },
-      errorElement: "div",
-      errorPlacement: function (error, element) {
-        error.addClass("invalid-feedback");
-        error.insertAfter(element);
-      },
-      highlight: function (element, errorClass, validClass) {
-        $(element).addClass("is-invalid").removeClass("is-valid");
-      },
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass("is-invalid").addClass("is-valid");
-      },
-    });
 
-    // Return validation status
-    return $("#betform").valid();
-  };
+  const [data, setData] = useState(initialState);
+  const validatePatternTypeForm = () => {
+ 
+ $("#patterntypeform").validate({
+   rules: {
+    symbol_count: {
+        required: true,
+        digits: true, // Add this to ensure only numbers are allowed
+      },
+     patternType: {
+       required: true,
+     },
+     combination_count: {
+       required: true,
+     },
+   },
+   messages: {
+     symbol_count: {
+      required: "Please enter symbol count",
+      digits: "Symbol count must be a number",// Add this to ensure only numbers are allowed
+      },
+     patternType: {
+       required: "Please enter pattern type",
+     },
+     combination_count: {
+       required: "Please enter combination count",
+     },
+   },
+   errorElement: "div",
+   errorPlacement: function (error, element) {
+     error.addClass("invalid-feedback");
+     error.insertAfter(element);
+   },
+   highlight: function (element, errorClass, validClass) {
+     $(element).addClass("is-invalid").removeClass("is-valid");
+   },
+   unhighlight: function (element, errorClass, validClass) {
+     $(element).removeClass("is-invalid").addClass("is-valid");
+   },
+ });
+
+ // Return validation status
+ return $("#patterntypeform").valid();
+};
   const handleSubmit = async (e) => {
-    const updatedata = { id, oldData };
     e.preventDefault();
-    if (!validateBetForm()) {
-      return;
+    if(!validatePatternTypeForm()) {
+      return
     }
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/updatebet`, {
-        method: "PUT",
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertpatterntype`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedata),
+        body: JSON.stringify(data),
       });
       const response = await res.json();
       if (response.success) {
-        toast.success("Bet updated Successfully!", {
+        toast.success("Pattern type added Successfully!", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -107,11 +86,11 @@ const EditBet = () => {
           theme: "light",
         });
         setTimeout(() => {
-          navigate("/bets");
+          navigate("/patternstype");
         }, 1500);
       }
     } catch (err) {
-      console.err(err);
+      console.error(err);
     }
   };
   const handleGoBack = () => {
@@ -136,59 +115,59 @@ const EditBet = () => {
           onClick={handleGoBack}
           className="bg-[#5f22d9] rounded-full hover:scale-110 transition-all duration-100 text-white  text-[40px] cursor-pointer shadow-xl ml-5"
         />
-        <div className="text-2xl font-bold mx-2 my-8 px-2">Edit Bet</div>
+        <div className="text-2xl font-bold mx-2 my-8 px-2">Add Pattern Type</div>
       </div>
       <div className="flex flex-col items-center justify-center w-[70%] m-auto">
-        <form id="betform" className="w-[60%]">
+        <form id="patterntypeform" className="w-[60%]">
           <div className="my-4">
             <label
-              htmlFor="bet_size"
+              htmlFor="symbol_count"
               className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
             >
-              Bet size
+              Symbol count
             </label>
             <input
               type="text"
-              name="bet_size"
-              id="bet_size"
-              value={oldData?.bet_size}
+              name="symbol_count"
+              id="symbol_count"
+              value={data.symbol_count}
               onChange={handleChange}
               className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
-              placeholder="Enter Bet size"
+              placeholder="Enter symbol count"
             />
           </div>
           <div className="my-4 relative">
             <label
-              htmlFor="bet_line"
+              htmlFor="patternType"
               className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
             >
-              Bet Line
+            Pattern type
             </label>
             <input
               type="text"
-              name="bet_line"
-              id="bet_line"
-              value={oldData?.bet_line}
+              name="patternType"
+              id="patternType"
+              value={data.patternType}
               onChange={handleChange}
               className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
-              placeholder="Enter bet line"
+              placeholder="Enter the pattern type"
             />
           </div>
           <div className="my-4 relative">
             <label
-              htmlFor="bet_level"
+              htmlFor="combination_count"
               className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
             >
-              Bet_level
+            Combination count
             </label>
             <input
               type="text"
-              name="bet_level"
-              id="bet_level"
-              value={oldData?.bet_level}
+              name="combination_count"
+              id="combination_count"
+              value={data.combination_count}
               onChange={handleChange}
               className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
-              placeholder="Enter bet level"
+              placeholder="Enter combination count"
             />
           </div>
 
@@ -197,7 +176,7 @@ const EditBet = () => {
             onClick={handleSubmit}
             className="my-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            Save Changes
+            Add
           </button>
         </form>
       </div>
@@ -205,4 +184,4 @@ const EditBet = () => {
   );
 };
 
-export default EditBet;
+export default AddPatternType;

@@ -4,8 +4,8 @@ import { CiEdit } from "react-icons/ci";
 import { NavLink } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const Patterns = () => {
-  const [patterns, setPatterns] = useState([]);
+const PatternsType = () => {
+  const [patternTypes, setPatternTypes] = useState([]);
   const [noData, setNoData] = useState(false);
   const [loader, setLoader] = useState(true);
   const [page, setPage] = useState(1);
@@ -13,82 +13,21 @@ const Patterns = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    fetchPatterns();
+    fetchPatternTypes();
   }, [page]);
-  const fetchPatternType = async (id) => {
-    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getSinglepatterntype`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
+
+  const fetchPatternTypes = async () => {
+    setLoader(true);
+    const res = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/getAllpatterntype?page=${page}&limit=${pageSize}`
+    );
     const response = await res.json();
     if (response.success) {
-      const type = `${response?.result?.symbol_count} symbol - ${response?.result?.patternType} - ${response?.result?.combination_count} combination count`;
-      return type;
-    }
-  };
-  const fetchSymbolName = async (id) => {
-    try {
-      const symbolRes = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/getSinglesymbol`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }),
-        }
-      );
-      const symbolData = await symbolRes.json();
-      return symbolData.success ? symbolData.result.symbol_name : "Unknown";
-    } catch (error) {
-      console.error("Error fetching symbol name:", error);
-      return "Unknown";
-    }
-  };
-  const fetchPatterns = async () => {
-    setLoader(true);
-    try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/getAllpattern?page=${page}&limit=${pageSize}`
-      );
-      const response = await res.json();
-
-      if (response.success) {
-        if (response.result.length === 0) {
-          setNoData(true);
-        }
-
-        // Map each pattern, resolving all symbol names and pattern type for each pattern
-        const updatedPatterns = await Promise.all(
-          response.result.map(async (pattern) => {
-            // Fetch and map symbol names
-            const symbolsWithNames = await Promise.all(
-              pattern.symbol.map(async (symbolId) => {
-                const symbolName = await fetchSymbolName(symbolId);
-                return symbolName;
-              })
-            );
-
-            // Fetch the pattern type string using the patterntype_id of each pattern
-            const patternTypeString = await fetchPatternType(
-              pattern.patternType
-            );
-
-            // Return the updated pattern with symbol names and pattern type string
-            return {
-              ...pattern,
-              symbol: symbolsWithNames, // Updated with symbol names
-              patternType: patternTypeString, // Updated with pattern type string
-            };
-          })
-        );
-        setPatterns(updatedPatterns);
-        setCount(response.count);
-      } else {
-        setNoData(true);
+      if(response.result.length===0) {
+        setNoData(true)
       }
-    } catch (error) {
-      console.error("Error fetching patterns:", error);
-    } finally {
+      setPatternTypes(response.result);
+      setCount(response.count);
       setLoader(false);
     }
   };
@@ -96,14 +35,14 @@ const Patterns = () => {
   const handleDelete = async (e, id) => {
     e.preventDefault();
     const permissionOfDelete = window.confirm(
-      "Are you sure, you want to delete the pattern"
+      "Are you sure, you want to delete the patterntype"
     );
     if (permissionOfDelete) {
-      let patternOne = patterns.length === 1;
+      let patternTypeOne = patternTypes.length === 1;
       if (count === 1) {
-        patternOne = false;
+        patternTypeOne = false;
       }
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/deletepattern`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/deletepatterntype`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
@@ -113,7 +52,7 @@ const Patterns = () => {
       }
       const response = await res.json();
       if (response.success) {
-        toast.success("Pattern is deleted Successfully!", {
+        toast.success("Pattern Type is deleted Successfully!", {
           position: "top-right",
           autoClose: 1000,
           hideProgressBar: false,
@@ -123,10 +62,10 @@ const Patterns = () => {
           progress: undefined,
           theme: "light",
         });
-        if (patternOne) {
+        if (patternTypeOne) {
           setPage(page - 1);
         } else {
-          fetchPatterns();
+          fetchPatternTypes();
         }
       }
     }
@@ -150,10 +89,10 @@ const Patterns = () => {
       />
 
       <div className="flex items-center">
-        <div className="text-2xl font-bold mx-2 my-8 px-4">Patterns List</div>
+        <div className="text-2xl font-bold mx-2 my-8 px-4">Pattern Type List</div>
       </div>
       <div className="flex justify-between">
-        <NavLink to="/patterns/addpattern">
+        <NavLink to="/patternstype/addpatterntype">
           <button className="bg-[#5f22d9] text-white p-3 m-5 text-sm rounded-lg">
             Add New
           </button>
@@ -173,7 +112,7 @@ const Patterns = () => {
         </div>
       )}
       <div className="relative overflow-x-auto m-5 mb-0">
-        {patterns.length > 0 && (
+        {patternTypes.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right border-2 border-gray-300">
             <thead className="text-xs uppercase bg-gray-200">
               <tr>
@@ -181,19 +120,13 @@ const Patterns = () => {
                   Sr no.
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  Symbol
+                  Symbol count
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Pattern type
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  min Matches Required
-                </th>
-                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  win amount
-                </th>
-                <th scope="col" className="px-6 py-3 border-2 border-gray-300">
-                  description
+                  Combination count
                 </th>
                 <th scope="col" className="px-6 py-3 border-2 border-gray-300">
                   Action
@@ -202,7 +135,7 @@ const Patterns = () => {
             </thead>
 
             <tbody>
-              {patterns.map((item, index) => (
+              {patternTypes.map((item, index) => (
                 <tr key={item?._id} className="bg-white">
                   <th
                     scope="row"
@@ -212,27 +145,21 @@ const Patterns = () => {
                   </th>
 
                   <td className="px-6 py-4 border-2 border-gray-300 relative">
-                    {(item?.symbol).join(", ")}
+                    {item?.symbol_count}
                   </td>
 
                   <th
                     scope="row"
-                    className="px-6 py-4 font-medium text-gray-900  border-2 border-gray-300"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap border-2 border-gray-300"
                   >
                     {item?.patternType}
                   </th>
                   <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.minMatchesRequired || "-"}
-                  </td>
-                  <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.win_amount}
-                  </td>
-                  <td className="px-6 py-4 border-2 border-gray-300">
-                    {item?.description || "-"}
+                    {item?.combination_count}
                   </td>
                   <td className=" py-5 pl-5 gap-1 border-2  border-gray-300">
                     <div className="flex items-center">
-                      <NavLink to={`/patterns/editpattern/${item?._id}`}>
+                      <NavLink to={`/patternstype/editpatterntype/${item?._id}`}>
                         <CiEdit className="text-2xl cursor-pointer text-green-900" />
                       </NavLink>
                       <MdDelete
@@ -249,11 +176,11 @@ const Patterns = () => {
       </div>
       {noData && (
         <div className="text-center text-xl">
-          Currently! There are no patterns in the storage.
+          Currently! There are no Pattern types in the storage.
         </div>
       )}
 
-      {patterns.length > 0 && (
+      {patternTypes.length > 0 && (
         <div className="flex flex-col items-center my-10">
           <span className="text-sm text-black">
             Showing{" "}
@@ -275,7 +202,7 @@ const Patterns = () => {
             <button
               onClick={() => setPage(page + 1)}
               disabled={
-                patterns.length < pageSize || startIndex + pageSize >= count
+                patternTypes.length < pageSize || startIndex + pageSize >= count
               }
               className="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900"
             >
@@ -288,4 +215,4 @@ const Patterns = () => {
   );
 };
 
-export default Patterns;
+export default PatternsType;

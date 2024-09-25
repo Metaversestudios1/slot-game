@@ -15,17 +15,25 @@ const AddPattern = () => {
     symbol: [],
     patternType: "",
     coordinates: {}, // Initialize as an empty object, we'll add symbols dynamically
-    win_amount: "",
     description: "",
     minMatchesRequired: "",
   };
 
   const [data, setData] = useState(initialState);
+  const [patternType, setPatternType] = useState([]);
 
   useEffect(() => {
     fetchSymbols();
+    fetchPatternType();
   }, []);
 
+  const fetchPatternType = async () => {
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllpatterntype`);
+    const response = await res.json();
+    if (response.success) {
+      setPatternType(response.result);
+    }
+  };
   const fetchSymbols = async () => {
     const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`);
     const response = await res.json();
@@ -62,65 +70,71 @@ const AddPattern = () => {
     return $("#patternform").valid();
   };
 
-  const findDuplicateCoordinates = () => {
-    const coordMap = {};
-    const { coordinates, symbol } = data;
+  // const findDuplicateCoordinates = () => {
+  //   const coordMap = {};
+  //   const { coordinates, symbol } = data;
 
-    // Traverse through each selected symbol's coordinates
-    for (const symbolId in coordinates) {
-      const symbolCoords = coordinates[symbolId];
+  //   // Traverse through each selected symbol's coordinates
+  //   for (const symbolId in coordinates) {
+  //     const symbolCoords = coordinates[symbolId];
 
-      if (!symbolCoords) continue; // Skip if coordinates for this symbol are undefined
+  //     if (!symbolCoords) continue; // Skip if coordinates for this symbol are undefined
 
-      symbolCoords.forEach((row, rowIndex) => {
-        row.forEach((col, colIndex) => {
-          // Ensure we're only considering defined values (actual coordinates)
-          if (col !== undefined && col !== null && col !== "") {
-            const coordKey = `${rowIndex}-${colIndex}`;
-            coordMap[coordKey] = (coordMap[coordKey] || 0) + 1;
-          }
-        });
-      });
-    }
+  //     symbolCoords.forEach((row, rowIndex) => {
+  //       row.forEach((col, colIndex) => {
+  //         // Ensure we're only considering defined values (actual coordinates)
+  //         if (col !== undefined && col !== null && col !== "") {
+  //           const coordKey = `${rowIndex}-${colIndex}`;
+  //           coordMap[coordKey] = (coordMap[coordKey] || 0) + 1;
+  //         }
+  //       });
+  //     });
+  //   }
 
-    const totalSelectedSymbols = symbol.length;
-    let overlappingCoords = 0;
+  //   const totalSelectedSymbols = symbol.length;
+  //   let overlappingCoords = 0;
 
-    // Count overlapping coordinates (coordinates used by more than one symbol)
-    for (const key in coordMap) {
-      if (coordMap[key] > 1) {
-        overlappingCoords++;
-      }
-    }
+  //   // Count overlapping coordinates (coordinates used by more than one symbol)
+  //   for (const key in coordMap) {
+  //     if (coordMap[key] > 1) {
+  //       overlappingCoords++;
+  //     }
+  //   }
 
-    // If two symbols are selected, allow only one overlap
-    if (totalSelectedSymbols === 2 && overlappingCoords > 1) {
-      return true; // More than 1 overlapping coordinate for 2 symbols
-    }
+  //   // If two symbols are selected, allow only one overlap
+  //   if (totalSelectedSymbols === 2 && overlappingCoords > 1) {
+  //     return true; // More than 1 overlapping coordinate for 2 symbols
+  //   }
 
-    // If three symbols are selected, allow up to two overlaps
-    if (totalSelectedSymbols === 3 && overlappingCoords > 2) {
-      return true; // More than 2 overlapping coordinates for 3 symbols
-    }
+  //   // If three symbols are selected, allow up to two overlaps
+  //   if (totalSelectedSymbols === 3 && overlappingCoords > 2) {
+  //     return true; // More than 2 overlapping coordinates for 3 symbols
+  //   }
 
-    return false; // Valid pattern, no conflicts
-  };
+  //   return false; // Valid pattern, no conflicts
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validatePatternForm()) {
       return;
     }
-    if (findDuplicateCoordinates()) {
-      toast.error(
-        "The coordinates are conflicting, Please make sure you choose right pattern!",
-        {
-          position: "top-right",
-          autoClose: 2000,
-        }
-      );
-      return;
-    }
+    // if (findDuplicateCoordinates()) {
+    //   toast.error(
+    //     "The coordinates are conflicting, Please make sure you choose right pattern!",
+    //     {
+    //       position: "top-right",
+    //       autoClose: 1000,
+    //       hideProgressBar: false,
+    //       closeOnClick: true,
+    //       pauseOnHover: true,
+    //       draggable: true,
+    //       progress: undefined,
+    //       theme: "light",
+    //     }
+    //   );
+    //   return;
+    // }
 
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/insertpattern`, {
@@ -133,6 +147,12 @@ const AddPattern = () => {
         toast.success("Pattern added Successfully!", {
           position: "top-right",
           autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
         });
         setTimeout(() => {
           navigate("/patterns");
@@ -151,7 +171,13 @@ const AddPattern = () => {
       if (checked && prevState.symbol.length >= 3) {
         toast.error("You can select a maximum of 3 symbols!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
         });
         return prevState; // Prevent adding more than 3 symbols
       }
@@ -181,10 +207,20 @@ const AddPattern = () => {
       return { ...prevState, coordinates: updatedCoordinates };
     });
   };
-  console.log(data);
   return (
     <div>
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div className="flex items-center">
         <IoIosArrowRoundBack
           onClick={() => navigate(-1)}
@@ -197,7 +233,7 @@ const AddPattern = () => {
           <div>
             <label
               htmlFor="symbol"
-              className="block mb-2 text-sm font-medium text-gray-900"
+              className="block mb-2 text-lg font-medium text-gray-900"
             >
               Symbols
             </label>
@@ -210,7 +246,10 @@ const AddPattern = () => {
                 Select symbols <FaAngleDown />
               </button>
               {dropdownOpen && (
-                <div className="absolute max-h-36 overflow-y-scroll top-full left-0 bg-white border rounded-sm w-full">
+                <div
+                  className="absolute max-h-36 overflow-y-scroll top-full left-0 bg-white border rounded-sm w-full"
+                  style={{ zIndex: 10 }}
+                >
                   {symbols.map((item) => (
                     <div key={item._id} className="p-2 bg-gray-200">
                       <input
@@ -230,10 +269,38 @@ const AddPattern = () => {
               )}
             </div>
           </div>
-
+          <div className="my-4">
+            <label
+              htmlFor="employee_type"
+              className="block mb-2 text-lg font-medium text-gray-900 dark:text-black"
+            >
+              Pattern type
+            </label>
+            <select
+              name="patternType"
+              value={data?.patternType}
+              onChange={(e) =>
+                setData({ ...data, [e.target.name]: e.target.value })
+              }
+              className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+            >
+              <option value="">Select a pattern type.</option>
+              {patternType.map((option) => {
+                return (
+                  <option
+                    key={option?._id}
+                    value={option?._id}
+                    className=" bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-black block w-full p-2.5 "
+                  >
+                    {option?.symbol_count} symbol - {option?.patternType} - {option?.combination_count} combination count
+                  </option>
+                );
+              })}
+            </select>
+          </div>
           {data.symbol.map((symbolId, index) => (
-            <div key={symbolId}>
-              <h4 className="mt-4 mb-2">
+            <div key={symbolId} className="my-4">
+              <h4 className="block mb-2 text-lg font-medium text-gray-900">
                 Coordinates for Symbol{" "}
                 {symbols.map((item) => {
                   return item._id === symbolId ? item.symbol_name : "";
@@ -265,41 +332,6 @@ const AddPattern = () => {
             </div>
           ))}
 
-          <div className="my-4">
-            <label
-              htmlFor="patternType"
-              className="block mb-2 text-lg font-medium text-gray-900"
-            >
-              Pattern Type
-            </label>
-            <input
-              type="text"
-              name="patternType"
-              value={data.patternType}
-              onChange={(e) =>
-                setData({ ...data, patternType: e.target.value })
-              }
-              className="bg-gray-200 border border-gray-300 text-sm rounded-lg p-2.5 w-full"
-              placeholder="Enter pattern type"
-            />
-          </div>
-
-          <div className="my-4">
-            <label
-              htmlFor="win_amount"
-              className="block mb-2 text-lg font-medium text-gray-900"
-            >
-              Win Amount
-            </label>
-            <input
-              type="text"
-              name="win_amount"
-              value={data.win_amount}
-              onChange={(e) => setData({ ...data, win_amount: e.target.value })}
-              className="bg-gray-200 border border-gray-300 text-sm rounded-lg p-2.5 w-full"
-              placeholder="Enter win amount"
-            />
-          </div>
           <div className="my-4 relative">
             <label
               htmlFor="minMatchesRequired"

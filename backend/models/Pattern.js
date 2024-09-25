@@ -25,6 +25,10 @@ coordinates: {
     type: String,
     default: '',  // Optional description of the pattern
   },
+  deleted_at: {
+      type: Date,
+      default: null,
+    },
 
 }, { timestamps: true, collection: "pattern" });
 

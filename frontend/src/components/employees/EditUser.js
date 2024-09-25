@@ -40,7 +40,6 @@ const EditUser = () => {
         body: JSON.stringify({ id }),
       });
       const result = await response.json();
-      console.log(result)
       if (result.success) {
         setOldData({
           ...oldData,

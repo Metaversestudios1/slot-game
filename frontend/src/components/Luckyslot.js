@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from "react";
- 
- 
+
 function Luckyslot() {
   const [columns, setColumns] = useState([[], [], []]); // Initial symbols for 3 columns
   const [spinning, setSpinning] = useState(false); // To track if spinning
   const [result, setResult] = useState(""); // Win or lose result
   const [payout, setPayout] = useState(0); // Payout amount
   const [betAmount, setBetAmount] = useState(0); // Bet amount
-  const [allSymbols,setAllSymbols] = useState([])
+  const [allSymbols, setAllSymbols] = useState([]);
   useEffect(() => {
     fetchsymbol();
   }, []);
- 
-  const fetchsymbol =async ()  =>{
-    try{
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`)      
-        const result = await response.json();
-     
-        const allSymbolsmap = result.result.map((item)=>{
-            return item.symbol_name;
-        })
-        setAllSymbols(allSymbolsmap)
-        // console.log(allSymbols);
-       
-    }catch(error){
+
+  const fetchsymbol = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/getAllsymbol`);
+      const result = await response.json();
+
+      const allSymbolsmap = result.result.map((item) => {
+        return item.symbol_name;
+      });
+      setAllSymbols(allSymbolsmap);
+    } catch (error) {
       console.error("Failed to fetch old data:", error);
     }
-  }
+  };
   // Function to spin the slot machine
   const spinSlot = () => {
     // Start spinning animation by randomizing symbols for 2 seconds
@@ -37,12 +34,12 @@ function Luckyslot() {
         [randomSymbol(), randomSymbol(), randomSymbol()],
       ]);
     }, 100); // Change symbols every 100ms for the spinning effect
- 
+
     setSpinning(true);
- 
+
     // Stop spinning after 2 seconds and get backend result
     setTimeout(async () => {
-       // Stop the randomization
+      // Stop the randomization
       // Fetch the backend result symbols
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/playslot`, {
@@ -52,36 +49,33 @@ function Luckyslot() {
           },
           body: JSON.stringify({ betAmount }), // Send bet amount to backend
         });
- 
-        const data = await response.json();
-        if(data.success) {
 
+        const data = await response.json();
+        if (data.success) {
           clearInterval(spinInterval);
-          setColumns((prevColumns) => [
-            [prevColumns[0][0], data.symbols[0], prevColumns[0][2]], // Keep top row, randomize middle row symbol
-            [prevColumns[1][0], data.symbols[1], prevColumns[1][2]], // Middle row set to backend result symbols
-            [prevColumns[2][0], data.symbols[2], prevColumns[2][2]], // Keep bottom row, randomize middle row symbol
+          setColumns([
+            [data.symbols[0][0], data.symbols[1][0], data.symbols[2][0]], // Keep top row, randomize middle row symbol
+            [data.symbols[0][1], data.symbols[1][1], data.symbols[2][1]], // Middle row set to backend result symbols
+            [data.symbols[0][2], data.symbols[1][2], data.symbols[2][2]], // Keep bottom row, randomize middle row symbol
           ]);
           setResult(data.result); // win or lose
           setPayout(data.payout); // payout if win
-
         }
       } catch (error) {
         console.error("Error fetching slot result:", error);
       }
- 
+
       setSpinning(false); // Reset spinning state
     }, 1500); // Stop spinning after 2 seconds
   };
- 
+
   // Helper function to get a random symbol
   const randomSymbol = () =>
     allSymbols[Math.floor(Math.random() * allSymbols.length)];
-  console.log(columns)
   return (
     <div>
       <h1>Lucky Slot Game</h1>
- 
+
       <div>
         <label>
           Bet Amount:
@@ -95,7 +89,7 @@ function Luckyslot() {
           {spinning ? "Spinning..." : "Spin"}
         </button>
       </div>
- 
+
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
@@ -110,7 +104,7 @@ function Luckyslot() {
           </div>
         ))}
       </div>
- 
+
       {/* Display result and payout */}
       {result && (
         <div>
@@ -122,5 +116,5 @@ function Luckyslot() {
     </div>
   );
 }
- 
+
 export default Luckyslot;

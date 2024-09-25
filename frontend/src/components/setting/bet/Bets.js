@@ -22,7 +22,6 @@ const Bets = () => {
       `${process.env.REACT_APP_BACKEND_URL}/api/getAllbet?page=${page}&limit=${pageSize}`
     );
     const response = await res.json();
-    console.log(response)
     if (response.success) {
       if(response.result.length===0) {
         setNoData(true)
