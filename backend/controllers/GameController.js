@@ -13,7 +13,6 @@ async function spinSlot(betAmount) {
     }
   });
 
-  // Create a 3x3 matrix with randomly selected symbols
   const matrix = [];
   for (let row = 0; row < 3; row++) {
     matrix[row] = [];
@@ -22,7 +21,6 @@ async function spinSlot(betAmount) {
         weightedSymbols[Math.floor(Math.random() * weightedSymbols.length)];
     }
   }
-  console.log(matrix);
 
   return matrix; // Return the 3x3 matrix of symbols
 }
@@ -33,11 +31,14 @@ function calculatePayout(betAmount, winAmount) {
 }
 
 const checkMatrixAgainstPatterns = async (matrix) => {
-  const patterns = await Pattern.find({ deleted_at: null }).exec(); // Fetch all patterns from the DB
+  const patterns = await Pattern.find().exec(); // Fetch all patterns from the DB
   let totalWinAmount = 0;
+  let count = 1;
+  let winningCoordinates = []; // Track coordinates of winning symbols
 
   for (const pattern of patterns) {
     let currentPatternWinAmount = 0; // Track win amount for the current pattern
+    let currentPatternCoordinates = []; // Temporary storage for current pattern's coordinates
 
     // Check all symbol IDs in the pattern
     for (const symbolId of pattern.symbol) {
@@ -64,20 +65,25 @@ const checkMatrixAgainstPatterns = async (matrix) => {
       }
 
       // If the symbol matches its coordinates, accumulate win amount
-      if (match) {
+      if (match && count < 4) {
+        count++;
         currentPatternWinAmount += pattern.win_amount;
+        currentPatternCoordinates.push(...patternCoordinates); // Store the matching coordinates
       }
     }
 
     // Add current pattern's win amount to total if any matches are found
-    totalWinAmount += currentPatternWinAmount;
+    if (currentPatternWinAmount > 0) {
+      totalWinAmount += currentPatternWinAmount;
+      winningCoordinates.push(...currentPatternCoordinates); // Store winning coordinates for this pattern
+    }
   }
 
   if (totalWinAmount > 0) {
-    return { isWin: true, totalWinAmount }; // Return total win amount if there are any matches
+    return { isWin: true, totalWinAmount, winningCoordinates }; // Return win amount and coordinates if there are any matches
   }
 
-  return { isWin: false }; // No matching pattern, return lose
+  return { isWin: false, winningCoordinates: [] }; // No matching pattern, return lose and empty coordinates
 };
 
 const checkWinOrLose = async (req, res) => {
@@ -85,7 +91,8 @@ const checkWinOrLose = async (req, res) => {
 
   try {
     const matrix = await spinSlot(betAmount); // Generate the 3x3 matrix
-    const { isWin, totalWinAmount } = await checkMatrixAgainstPatterns(matrix); // Check if matrix matches any pattern
+    const { isWin, totalWinAmount, winningCoordinates } =
+      await checkMatrixAgainstPatterns(matrix); // Check if matrix matches any pattern
 
     let payout = 0;
     let result = "lose";
@@ -110,6 +117,7 @@ const checkWinOrLose = async (req, res) => {
       result,
       payout,
       symbols: matrix, // Return the full 2D matrix
+      winningCoordinates, // Return the winning coordinates to highlight the combo
     });
   } catch (error) {
     console.error(error);

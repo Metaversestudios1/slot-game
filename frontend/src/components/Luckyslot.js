@@ -20,6 +20,7 @@ function Luckyslot() {
         return item.symbol_name;
       });
       setAllSymbols(allSymbolsmap);
+      // console.log(allSymbols);
     } catch (error) {
       console.error("Failed to fetch old data:", error);
     }
@@ -51,6 +52,7 @@ function Luckyslot() {
         });
 
         const data = await response.json();
+        console.log(data)
         if (data.success) {
           clearInterval(spinInterval);
           setColumns([
@@ -66,7 +68,7 @@ function Luckyslot() {
       }
 
       setSpinning(false); // Reset spinning state
-    }, 500); // Stop spinning after 2 seconds
+    }, 700); // Stop spinning after 2 seconds
   };
 
   // Helper function to get a random symbol
