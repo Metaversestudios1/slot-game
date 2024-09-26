@@ -52,7 +52,6 @@ function Luckyslot() {
         });
 
         const data = await response.json();
-        console.log(data)
         if (data.success) {
           clearInterval(spinInterval);
           setColumns([
@@ -68,7 +67,7 @@ function Luckyslot() {
       }
 
       setSpinning(false); // Reset spinning state
-    }, 700); // Stop spinning after 2 seconds
+    }, 200); 
   };
 
   // Helper function to get a random symbol
